@@ -1,0 +1,152 @@
+{% extends "home/contest_header.html" %}  
+
+{% block stylefile %}
+    <style>
+        input[type=text]{
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        select {
+            width: 90%;
+            padding: 10px 16px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            overflow: hidden;
+            font-size: 12px;
+        }
+        .clearification-form-holder{
+            margin: 60px auto;
+            padding: 2%;
+            width: 80%;
+            background-color: white;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            margin-top: 80px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .clearification-holder{
+            margin: 50px auto;
+            padding: 2%;
+            background-color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .form-header{
+            width: 100%;
+            height: 40px;
+            margin: 0 auto;
+            margin-bottom: 10px;
+            margin-top: -40px;
+            background-color:#033585;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            color: white;
+            padding-left: 20px;
+            padding-top: 10px;
+        }
+        textarea{
+            font-size: 12px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            width: 90%;
+        }
+        .form-header h5{
+            font-size: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .clearification-list{
+            background-color: white;
+        }
+        .test{
+            border: 0.5px solid #cfcfcf;
+            margin-bottom: 5px;
+            border-radius: 2px;
+        }
+        hr{
+            margin-top: 1px;
+            margin-bottom: 1px;
+            border: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1)
+        }
+        p{
+            margin-left: 9px;
+            font-weight: 400;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if running %}
+
+        <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="clearification-form-holder">
+                    <div class="form-header">
+                        <h5>Seek Clearifications</h5>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div>
+                            <h5 style="font-size: 15px;">Select Problem</h5>
+                            <select name="problem_name" id="selected-problem">
+                                {% for problem in problem_list %}
+                                    <option value="{{problem.id}}"> {{ problem.problem_name }} </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="h-user" style="font-size: 15px;">
+                            <strong>Clearification</strong>
+                        </div>
+                        <textarea name="clearification-text" id="clearification-text" cols="60" rows="2"></textarea>
+                        <div style="text-align: left; width: 65%; margin: 0 auto;">
+                            <input type="submit" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="clearification-holder">
+                    <h5 style="text-align: center; color: #575d63;"> Clearifications for  <span style="letter-spacing:3px; color: #575d63;"> {{ contest_info.name }} </span>  </h5>
+                    
+                    <div class="clearification-list">
+                        {% for c in clearification_list %}
+                            <div class="test">
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-1" style="border: 1px solid black; margin-left: 15px;">
+                                        <div style="top: 50%; left: 50%; position: absolute; transform: translate(-50%,-50%);">
+                                            <h5>{{ c.associated_problem.problem_title }}</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 col-sm-10 col-10">
+                                        <p style="padding-bottom: 1rem; margin-top: 5px; font-size: 18px;"> {{ c.clearification_text }} </p>
+                                        <hr>
+                                        {% if c.judge_ignored == True %}
+                                            <p style="font-size: 15px;">Ignored</p>
+                                        {% elif c.judge_answer|length > 0  %}
+                                            <p style="font-size: 15px;">{{c.judge_answer}}</p>
+                                        {% else %}
+                                        <p style="font-size: 15px;">Not Answered Yet!</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% endif %}
+{% endblock %}
